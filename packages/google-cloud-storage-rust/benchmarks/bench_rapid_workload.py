@@ -283,10 +283,12 @@ async def run_all_benchmarks() -> Dict[str, Any]:
     results: List[Dict[str, Any]] = []
 
     # 1. BidiRead Benchmarks (CloudPath for both Python and Rust)
+    # 1. BidiRead Benchmarks (CloudPath for both Python and Rust against bench/bench_20GB.bin)
     for num_ranges, range_size in [
         (100, 64 * 1024),        # 100 x 64 KiB
         (64, 1024 * 1024),       # 64 x 1 MiB
         (16, 16 * 1024 * 1024),  # 16 x 16 MiB (256 MiB)
+        (1, 100 * 1024 * 1024),  # 1 x 100 MiB (100 MiB)
     ]:
         for backend in ("python", "rust"):
             res = await bench_bidi_read(
@@ -295,8 +297,11 @@ async def run_all_benchmarks() -> Dict[str, Any]:
                 num_ranges=num_ranges,
                 range_size=range_size,
                 subchannel_count=1,
+                use_zero_copy_bytes=(backend == "rust"),
+                subchannel_count=8 if (live_bucket and backend == "rust") else 1,
                 live_bucket=live_bucket,
                 live_object="bench/bench_1GB.bin" if live_bucket else None,
+                live_object="bench/bench_20GB.bin" if live_bucket else None,
             )
             results.append(res)
         if live_bucket:
@@ -322,6 +327,7 @@ async def run_all_benchmarks() -> Dict[str, Any]:
                 live_object="bench/bench_1GB.bin" if live_bucket else None,
             )
             results.append(res_zc)
+
 
     # 2. BidiWrite Benchmarks (CloudPath for both Python and Rust)
     for num_appends, append_size in [

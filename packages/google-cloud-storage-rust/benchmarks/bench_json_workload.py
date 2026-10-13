@@ -48,7 +48,7 @@ from google.cloud.storage_rust import _rust_core
 BackendMode = Literal["python_json", "rust_json"]
 
 
-def _create_python_json_client(pool_maxsize: int = 64) -> storage.Client:
+def _create_python_json_client(pool_maxsize: int = 128) -> storage.Client:
     """Create a Python ``google.cloud.storage.Client`` with a sized urllib3 connection pool."""
     client = storage.Client()
     adapter = HTTPAdapter(pool_connections=pool_maxsize, pool_maxsize=pool_maxsize)
@@ -66,7 +66,7 @@ async def bench_json_read(
     num_ranges: int,
     range_size: int,
     iterations: int = 5,
-    use_bytesio: bool = True,
+    use_bytesio: bool = False,
 ) -> Dict[str, Any]:
     """Benchmark HTTP/JSON range reads: Python ``storage.Client`` vs Rust ``Storage::read_object``."""
     max_offset = max(0, obj_size - range_size)
@@ -77,7 +77,7 @@ async def bench_json_read(
 
     bucket = py_client.bucket(bucket_name)
     blob = bucket.blob(object_name)
-    max_workers = min(32, max(1, num_ranges))
+    max_workers = max(1, num_ranges)
 
     def _py_download_one(off_len: tuple[int, int]) -> bytes:
         off, length = off_len
@@ -92,41 +92,44 @@ async def bench_json_read(
             buf.write(data)
         return data
 
-    async def _run_once() -> None:
-        if backend == "python_json":
-            if num_ranges == 1:
-                await asyncio.to_thread(_py_download_one, ranges_spec[0])
-            else:
+    pool = ThreadPoolExecutor(max_workers=max_workers) if backend == "python_json" else None
+    try:
+        async def _run_once() -> None:
+            if backend == "python_json":
+                assert pool is not None
                 loop = asyncio.get_running_loop()
-                with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                    await asyncio.gather(
-                        *(
-                            loop.run_in_executor(pool, _py_download_one, spec)
-                            for spec in ranges_spec
-                        )
+                await asyncio.gather(
+                    *(
+                        loop.run_in_executor(pool, _py_download_one, spec)
+                        for spec in ranges_spec
                     )
-        else:
-            chunks = await _rust_core.json_read_ranges_bytes(
-                bucket_name, object_name, ranges_spec
-            )
-            if use_bytesio:
-                for chunk in chunks:
-                    buf = BytesIO()
-                    buf.write(chunk)
+                )
+            else:
+                chunks = await _rust_core.json_read_ranges_bytes(
+                    bucket_name, object_name, ranges_spec
+                )
+                if use_bytesio:
+                    for chunk in chunks:
+                        buf = BytesIO()
+                        buf.write(chunk)
 
-    # Warmup
-    await _run_once()
-
-    wall_times: List[float] = []
-    cpu_times: List[float] = []
-    total_bytes_per_iter = num_ranges * range_size
-
-    for _ in range(iterations):
-        t0_wall = time.perf_counter()
-        t0_cpu = time.process_time()
+        # Warmup (warms both thread pool and all num_ranges HTTPS connections)
         await _run_once()
-        wall_times.append(time.perf_counter() - t0_wall)
-        cpu_times.append(time.process_time() - t0_cpu)
+
+        wall_times: List[float] = []
+        cpu_times: List[float] = []
+        total_bytes_per_iter = num_ranges * range_size
+
+        for _ in range(iterations):
+            t0_wall = time.perf_counter()
+            t0_cpu = time.process_time()
+            await _run_once()
+            wall_times.append(time.perf_counter() - t0_wall)
+            cpu_times.append(time.process_time() - t0_cpu)
+    finally:
+        if pool is not None:
+            pool.shutdown(wait=True)
+
 
     median_wall = statistics.median(wall_times)
     p99_wall = sorted(wall_times)[int(len(wall_times) * 0.99) - 1]
@@ -260,16 +263,18 @@ async def bench_json_list(
 
 async def run_json_benchmarks() -> Dict[str, Any]:
     bucket_name = os.environ.get("GCS_JSON_BUCKET", "princer-flat")
-    py_client = _create_python_json_client(pool_maxsize=64)
+    py_client = _create_python_json_client(pool_maxsize=128)
 
     results: List[Dict[str, Any]] = []
 
-    # 1. ReadObject Benchmarks against bench/bench_20GB.bin (or bench/bench_100MB.bin)
-    for num_ranges, range_size, obj_name, obj_sz in [
-        (100, 64 * 1024, "bench/bench_100MB.bin", 100 * 1024 * 1024),
-        (64, 1024 * 1024, "bench/bench_100MB.bin", 100 * 1024 * 1024),
-        (16, 16 * 1024 * 1024, "bench/bench_20GB.bin", 20 * 1024 * 1024 * 1024),
-        (1, 100 * 1024 * 1024, "bench/bench_100MB.bin", 100 * 1024 * 1024),
+    # 1. ReadObject Benchmarks against bench/bench_20GB.bin
+    obj_name = "bench/bench_20GB.bin"
+    obj_sz = 20 * 1024 * 1024 * 1024
+    for num_ranges, range_size in [
+        (100, 64 * 1024),
+        (64, 1024 * 1024),
+        (16, 16 * 1024 * 1024),
+        (1, 100 * 1024 * 1024),
     ]:
         for backend in ("python_json", "rust_json"):
             res = await bench_json_read(
@@ -280,21 +285,10 @@ async def run_json_benchmarks() -> Dict[str, Any]:
                 obj_size=obj_sz,
                 num_ranges=num_ranges,
                 range_size=range_size,
-                use_bytesio=True,
-            )
-            results.append(res)
-        if range_size >= 16 * 1024 * 1024:
-            res_zc = await bench_json_read(
-                backend="rust_json",
-                py_client=py_client,
-                bucket_name=bucket_name,
-                object_name=obj_name,
-                obj_size=obj_sz,
-                num_ranges=num_ranges,
-                range_size=range_size,
                 use_bytesio=False,
             )
-            results.append(res_zc)
+            results.append(res)
+
 
     # 2. WriteObject Benchmarks
     for payload_size in [
