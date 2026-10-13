@@ -1,0 +1,24 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "google-cloud-storage-rust"
+version = "0.1.0"
+description = "Google Cloud Storage client library with dual Python and Rust (PyO3) backends for BidiRead, BidiWrite, and ListObjects"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "google-cloud-storage>=3.0.0",
+    "google-api-core>=2.15.0",
+    "google-auth>=2.26.1",
+    "google-crc32c>=1.1.0",
+]
+
+[tool.maturin]
+python-source = "."
+module-name = "google.cloud.storage_rust._rust_core"
+features = ["pyo3/extension-module"]
+rust-args = ["--cfg", "google_cloud_unstable_storage_bidi"]
+

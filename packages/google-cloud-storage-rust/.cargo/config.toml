@@ -1,0 +1,5 @@
+# Enable the storage SDK's appendable-object (BidiWriteObject) API, which is
+# gated behind an unstable rustc cfg flag in google-cloud-storage 1.x.
+[build]
+rustflags = ["--cfg", "google_cloud_unstable_storage_bidi"]
+

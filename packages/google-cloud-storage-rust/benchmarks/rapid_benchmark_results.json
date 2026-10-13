@@ -1,0 +1,155 @@
+{
+  "mode": "simulated_rapid_protocol",
+  "results": [
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 7.39,
+      "p99_latency_ms": 7.4,
+      "throughput_mib_s": 845.5,
+      "cpu_s_per_gib": 1.31
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 2.8,
+      "p99_latency_ms": 3.38,
+      "throughput_mib_s": 2233.6,
+      "cpu_s_per_gib": 0.893
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 48.41,
+      "p99_latency_ms": 53.15,
+      "throughput_mib_s": 1322.1,
+      "cpu_s_per_gib": 0.861
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 24.41,
+      "p99_latency_ms": 33.92,
+      "throughput_mib_s": 2622.3,
+      "cpu_s_per_gib": 0.906
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 326.12,
+      "p99_latency_ms": 383.11,
+      "throughput_mib_s": 785.0,
+      "cpu_s_per_gib": 1.379
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 107.82,
+      "p99_latency_ms": 146.83,
+      "throughput_mib_s": 2374.4,
+      "cpu_s_per_gib": 1.017
+    },
+    {
+      "operation": "BidiRead (ZeroCopy PyBytes)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 52.13,
+      "p99_latency_ms": 57.32,
+      "throughput_mib_s": 4911.0,
+      "cpu_s_per_gib": 0.686
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "64 x 256 KiB",
+      "median_latency_ms": 15.65,
+      "p99_latency_ms": 15.77,
+      "throughput_mib_s": 1022.2,
+      "cpu_s_per_gib": 1.024
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "64 x 256 KiB",
+      "median_latency_ms": 10.26,
+      "p99_latency_ms": 10.59,
+      "throughput_mib_s": 1560.0,
+      "cpu_s_per_gib": 0.738
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "8 x 16384 KiB",
+      "median_latency_ms": 195.22,
+      "p99_latency_ms": 197.16,
+      "throughput_mib_s": 655.7,
+      "cpu_s_per_gib": 1.565
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "8 x 16384 KiB",
+      "median_latency_ms": 85.75,
+      "p99_latency_ms": 87.09,
+      "throughput_mib_s": 1492.8,
+      "cpu_s_per_gib": 0.661
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "1,000 objects",
+      "median_latency_ms": 22.39,
+      "p99_latency_ms": 23.12,
+      "objects_per_sec": 44658.0,
+      "cpu_ms_per_call": 24.25
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "1,000 objects",
+      "median_latency_ms": 2.19,
+      "p99_latency_ms": 2.23,
+      "objects_per_sec": 456649.0,
+      "cpu_ms_per_call": 2.08
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "python",
+      "transport": "simulated",
+      "workload": "10,000 objects",
+      "median_latency_ms": 222.42,
+      "p99_latency_ms": 234.34,
+      "objects_per_sec": 44960.0,
+      "cpu_ms_per_call": 225.14
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "rust",
+      "transport": "simulated",
+      "workload": "10,000 objects",
+      "median_latency_ms": 18.21,
+      "p99_latency_ms": 19.16,
+      "objects_per_sec": 549173.0,
+      "cpu_ms_per_call": 20.18
+    }
+  ]
+}

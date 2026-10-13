@@ -1,0 +1,167 @@
+{
+  "mode": "live_json_bucket (princer-flat)",
+  "results": [
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "python_json",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 158.64,
+      "p99_latency_ms": 166.88,
+      "throughput_mib_s": 39.4,
+      "cpu_s_per_gib": 34.472
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "rust_json",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 43.2,
+      "p99_latency_ms": 49.36,
+      "throughput_mib_s": 144.7,
+      "cpu_s_per_gib": 5.329
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "python_json",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 294.24,
+      "p99_latency_ms": 313.96,
+      "throughput_mib_s": 217.5,
+      "cpu_s_per_gib": 6.422
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "rust_json",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 64.67,
+      "p99_latency_ms": 64.67,
+      "throughput_mib_s": 989.7,
+      "cpu_s_per_gib": 1.719
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "python_json",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 792.21,
+      "p99_latency_ms": 796.41,
+      "throughput_mib_s": 323.1,
+      "cpu_s_per_gib": 4.462
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "rust_json",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 216.56,
+      "p99_latency_ms": 217.04,
+      "throughput_mib_s": 1182.1,
+      "cpu_s_per_gib": 1.491
+    },
+    {
+      "operation": "ReadObject (ZeroCopy PyBytes)",
+      "backend": "rust_json",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 177.46,
+      "p99_latency_ms": 184.81,
+      "throughput_mib_s": 1442.6,
+      "cpu_s_per_gib": 1.384
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "python_json",
+      "workload": "1 x 102400 KiB",
+      "median_latency_ms": 402.58,
+      "p99_latency_ms": 418.86,
+      "throughput_mib_s": 248.4,
+      "cpu_s_per_gib": 2.693
+    },
+    {
+      "operation": "ReadObject (BytesIO)",
+      "backend": "rust_json",
+      "workload": "1 x 102400 KiB",
+      "median_latency_ms": 447.86,
+      "p99_latency_ms": 451.08,
+      "throughput_mib_s": 223.3,
+      "cpu_s_per_gib": 2.417
+    },
+    {
+      "operation": "ReadObject (ZeroCopy PyBytes)",
+      "backend": "rust_json",
+      "workload": "1 x 102400 KiB",
+      "median_latency_ms": 362.75,
+      "p99_latency_ms": 377.22,
+      "throughput_mib_s": 275.7,
+      "cpu_s_per_gib": 1.735
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "python_json",
+      "workload": "1 x 256 KiB",
+      "median_latency_ms": 67.22,
+      "p99_latency_ms": 70.73,
+      "throughput_mib_s": 3.7,
+      "cpu_s_per_gib": 5.232
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "rust_json",
+      "workload": "1 x 256 KiB",
+      "median_latency_ms": 59.03,
+      "p99_latency_ms": 60.88,
+      "throughput_mib_s": 4.2,
+      "cpu_s_per_gib": 2.71
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "python_json",
+      "workload": "1 x 16384 KiB",
+      "median_latency_ms": 211.98,
+      "p99_latency_ms": 229.66,
+      "throughput_mib_s": 75.5,
+      "cpu_s_per_gib": 0.693
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "rust_json",
+      "workload": "1 x 16384 KiB",
+      "median_latency_ms": 181.97,
+      "p99_latency_ms": 199.43,
+      "throughput_mib_s": 87.9,
+      "cpu_s_per_gib": 0.616
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "python_json",
+      "workload": "1 x 65536 KiB",
+      "median_latency_ms": 465.73,
+      "p99_latency_ms": 490.09,
+      "throughput_mib_s": 137.4,
+      "cpu_s_per_gib": 0.597
+    },
+    {
+      "operation": "WriteObject (HTTP Upload)",
+      "backend": "rust_json",
+      "workload": "1 x 65536 KiB",
+      "median_latency_ms": 521.18,
+      "p99_latency_ms": 560.39,
+      "throughput_mib_s": 122.8,
+      "cpu_s_per_gib": 1.223
+    },
+    {
+      "operation": "ListObjects (Paginator)",
+      "backend": "python_json",
+      "workload": "1,000 objects",
+      "median_latency_ms": 60.81,
+      "p99_latency_ms": 62.48,
+      "objects_per_sec": 16445.0,
+      "cpu_ms_per_call": 11.27
+    },
+    {
+      "operation": "ListObjects (Paginator)",
+      "backend": "rust_json",
+      "workload": "1,000 objects",
+      "median_latency_ms": 58.73,
+      "p99_latency_ms": 61.82,
+      "objects_per_sec": 17028.0,
+      "cpu_ms_per_call": 3.83
+    }
+  ]
+}
