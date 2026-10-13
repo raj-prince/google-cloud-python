@@ -117,6 +117,40 @@ struct BufPtr(*mut u8);
 unsafe impl Send for BufPtr {}
 unsafe impl Sync for BufPtr {}
 
+/// Zero-copy owner wrapper around an immutable Python `PyBytes` object for `bytes::Bytes::from_owner`.
+///
+/// Safety: `PyBytes` is immutable in Python, and `_owner` holds a strong `Py<PyBytes>` reference
+/// keeping the underlying byte buffer alive until `Bytes` drops it.
+struct PyBytesOwner {
+    _owner: Py<PyBytes>,
+    ptr: *const u8,
+    len: usize,
+}
+unsafe impl Send for PyBytesOwner {}
+unsafe impl Sync for PyBytesOwner {}
+
+impl AsRef<[u8]> for PyBytesOwner {
+    fn as_ref(&self) -> &[u8] {
+        unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
+    }
+}
+
+fn py_any_to_bytes(data: &Bound<'_, PyAny>) -> PyResult<Bytes> {
+    if let Ok(py_bytes) = data.cast::<PyBytes>() {
+        let slice = py_bytes.as_bytes();
+        let ptr = slice.as_ptr();
+        let len = slice.len();
+        Ok(Bytes::from_owner(PyBytesOwner {
+            _owner: py_bytes.clone().unbind(),
+            ptr,
+            len,
+        }))
+    } else {
+        let slice: &[u8] = data.extract()?;
+        Ok(Bytes::copy_from_slice(slice))
+    }
+}
+
 enum ReadBackendState {
     Live(Vec<ObjectDescriptor>),
     Simulated {
@@ -647,13 +681,17 @@ impl RustAppendableObjectWriter {
     }
 
     /// Append bytes to the open `BidiWriteObject` stream.
-    fn append<'py>(&mut self, py: Python<'py>, data: &[u8]) -> PyResult<Bound<'py, PyAny>> {
+    fn append<'py>(
+        &mut self,
+        py: Python<'py>,
+        data: &Bound<'py, PyAny>,
+    ) -> PyResult<Bound<'py, PyAny>> {
         if !self.is_open {
             return Err(PyValueError::new_err(
                 "Stream is not open. Call open() before append().",
             ));
         }
-        let chunk = Bytes::copy_from_slice(data);
+        let chunk = py_any_to_bytes(data)?;
         let len = chunk.len() as u64;
         self.offset += len;
         let state_arc = Arc::clone(&self.state);
@@ -1037,10 +1075,10 @@ fn json_write_object<'py>(
     py: Python<'py>,
     bucket_name: String,
     object_name: String,
-    data: &[u8],
+    data: &Bound<'py, PyAny>,
     endpoint: Option<String>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let payload = Bytes::copy_from_slice(data);
+    let payload = py_any_to_bytes(data)?;
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let clients = get_clients(endpoint, None).await?;
         let obj = clients

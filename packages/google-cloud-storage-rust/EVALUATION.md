@@ -27,34 +27,31 @@ Because the stable Rust SDK in [read_object.rs](file:///home/princer_google_com/
 
 ### HTTP/JSON Client Comparison (Regional Bucket princer-flat)
 
-| Workload | Python Latency | Rust Latency | Python CPU | Rust CPU | Python Memory | Rust Memory |
-| --- | --- | --- | --- | --- | --- | --- |
-| Read: 100 x 64 KiB Ranges | 158.64 ms | 43.20 ms | 34.47 s/GiB | 5.33 s/GiB | 81.7 MiB | 98.1 MiB |
-| Read: 64 x 1 MiB Ranges | 294.24 ms | 64.67 ms | 6.42 s/GiB | 1.72 s/GiB | 174.7 MiB | 182.8 MiB |
-| Read: 16 x 16 MiB (BytesIO) | 792.21 ms | 216.56 ms | 4.46 s/GiB | 1.49 s/GiB | 575.8 MiB | 604.3 MiB |
-| Read: 16 x 16 MiB (Zero-Copy) | 792.21 ms | 177.46 ms | 4.46 s/GiB | 1.38 s/GiB | 575.8 MiB | 348.1 MiB |
-| Read: 1 x 100 MiB Object | 402.58 ms | 362.75 ms | 2.69 s/GiB | 1.74 s/GiB | 270.8 MiB | 275.4 MiB |
-| Write: 1 x 256 KiB Upload | 67.22 ms | 59.03 ms | 5.23 s/GiB | 2.71 s/GiB | 72.1 MiB | 76.7 MiB |
-| Write: 1 x 16 MiB Upload | 211.98 ms | 181.97 ms | 0.69 s/GiB | 0.62 s/GiB | 87.6 MiB | 109.5 MiB |
-| Write: 1 x 64 MiB Upload | 465.73 ms | 521.18 ms | 0.60 s/GiB | 1.22 s/GiB | 135.4 MiB | 204.8 MiB |
-| List: 1,000 Objects | 60.81 ms | 58.73 ms | 11.27 ms/call | 3.83 ms/call | 81.1 MiB | 81.6 MiB |
+| Workload | Python Latency | Rust Latency | Latency Diff | Python CPU | Rust CPU | CPU Diff | Python Memory | Rust Memory | Memory Diff |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Read: 100 x 64 KiB Ranges | 158.64 ms | 43.20 ms | 3.67x faster | 34.47 s/GiB | 5.33 s/GiB | 6.47x less | 81.7 MiB | 98.1 MiB | +16.4 MiB |
+| Read: 64 x 1 MiB Ranges | 294.24 ms | 64.67 ms | 4.55x faster | 6.42 s/GiB | 1.72 s/GiB | 3.73x less | 174.7 MiB | 182.8 MiB | +8.1 MiB |
+| Read: 16 x 16 MiB Ranges | 792.21 ms | 177.46 ms | 4.46x faster | 4.46 s/GiB | 1.38 s/GiB | 3.23x less | 575.8 MiB | 348.1 MiB | -227.7 MiB |
+| Read: 1 x 100 MiB Object | 402.58 ms | 362.75 ms | 1.11x faster | 2.69 s/GiB | 1.74 s/GiB | 1.55x less | 270.8 MiB | 275.4 MiB | +4.6 MiB |
+| Write: 1 x 256 KiB Upload | 67.22 ms | 59.03 ms | 1.14x faster | 5.23 s/GiB | 2.71 s/GiB | 1.93x less | 72.1 MiB | 76.7 MiB | +4.6 MiB |
+| Write: 1 x 16 MiB Upload | 211.98 ms | 181.97 ms | 1.16x faster | 0.69 s/GiB | 0.39 s/GiB | 1.77x less | 87.6 MiB | 90.6 MiB | +3.0 MiB |
+| Write: 1 x 64 MiB Upload | 465.73 ms | 521.18 ms | 0.89x slower | 0.60 s/GiB | 0.34 s/GiB | 1.76x less | 135.4 MiB | 136.9 MiB | +1.5 MiB |
+| List: 1,000 Objects | 60.81 ms | 58.73 ms | 1.04x faster | 11.27 ms/call | 3.83 ms/call | 2.94x less | 81.1 MiB | 81.6 MiB | +0.5 MiB |
 
 ### CloudPath gRPC Client Comparison (Zonal Bucket princer-rapid-bucket)
 
-| Workload | Python Latency | Rust Latency | Python CPU | Rust CPU | Python Memory | Rust Memory |
-| --- | --- | --- | --- | --- | --- | --- |
-| BidiRead: 100 x 64 KiB (1ch) | 37.95 ms | 23.64 ms | 4.34 s/GiB | 2.13 s/GiB | 84.8 MiB | 84.6 MiB |
-| BidiRead: 64 x 1 MiB (8ch) | 200.22 ms | 84.94 ms | 4.08 s/GiB | 2.64 s/GiB | 203.1 MiB | 211.8 MiB |
-| BidiRead: 16 x 16 MiB (1ch BytesIO) | 1,027.10 ms | 760.05 ms | 4.97 s/GiB | 2.09 s/GiB | 687.5 MiB | 860.9 MiB |
-| BidiRead: 16 x 16 MiB (8ch Zero-Copy) | 1,027.10 ms | 299.23 ms | 4.97 s/GiB | 2.35 s/GiB | 687.5 MiB | 346.6 MiB |
-| BidiWrite: 64 x 256 KiB Appends | 157.98 ms | 143.70 ms | 1.86 s/GiB | 1.49 s/GiB | 90.4 MiB | 95.7 MiB |
-| BidiWrite: 8 x 16 MiB Appends | 495.75 ms | 395.07 ms | 1.32 s/GiB | 1.25 s/GiB | 118.8 MiB | 239.1 MiB |
-| ListObjects: 200 Live Objects | 51.55 ms | 44.13 ms | 4.90 ms/call | 1.63 ms/call | 72.4 MiB | 75.2 MiB |
+| Workload | Python Latency | Rust Latency | Latency Diff | Python CPU | Rust CPU | CPU Diff | Python Memory | Rust Memory | Memory Diff |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BidiRead: 100 x 64 KiB Ranges | 37.95 ms | 23.64 ms | 1.61x faster | 4.34 s/GiB | 2.13 s/GiB | 2.04x less | 84.8 MiB | 84.6 MiB | -0.2 MiB |
+| BidiRead: 64 x 1 MiB Ranges | 200.22 ms | 84.94 ms | 2.36x faster | 4.08 s/GiB | 2.64 s/GiB | 1.55x less | 203.1 MiB | 211.8 MiB | +8.7 MiB |
+| BidiRead: 16 x 16 MiB Ranges | 1,027.10 ms | 299.23 ms | 3.43x faster | 4.97 s/GiB | 2.35 s/GiB | 2.11x less | 687.5 MiB | 346.6 MiB | -340.9 MiB |
+| BidiWrite: 64 x 256 KiB Appends | 157.98 ms | 143.70 ms | 1.10x faster | 1.86 s/GiB | 1.49 s/GiB | 1.25x less | 90.4 MiB | 95.7 MiB | +5.3 MiB |
+| BidiWrite: 8 x 16 MiB Appends | 495.75 ms | 395.07 ms | 1.25x faster | 1.32 s/GiB | 0.63 s/GiB | 2.10x less | 118.8 MiB | 102.1 MiB | -16.7 MiB |
+| ListObjects: 200 Live Objects | 51.55 ms | 44.13 ms | 1.17x faster | 4.90 ms/call | 1.63 ms/call | 3.01x less | 72.4 MiB | 75.2 MiB | +2.8 MiB |
 
-Three practical takeaways explain when Rust helps and when it does not:
-- Concurrent multi-range reads see the largest gain (3.43x to 4.55x faster and 3.0x to 6.5x lower CPU) because Tokio runs 16 to 100 range transfers in parallel without contending on the Python interpreter lock.
-- Single-stream reads and writes see modest gains (1.11x to 1.25x) because a single CloudPath HTTP/2 or TCP stream is network-bound around 250 to 335 MiB/s. On a 64 MiB JSON upload, Rust is slightly slower (521 ms vs 466 ms) because Rust uses a multi-step resumable upload with full-payload CRC32C verification while Python sends a single-shot multipart post without checksums.
-- Even when copying into Python mutable byte streams (`BytesIO`), Rust is still up to 3.66x faster than Python (216.56 ms vs 792.21 ms on 16 x 16 MiB JSON reads), while using zero-copy pre-allocated byte buffers cuts peak memory from 604.3 MiB to 348.1 MiB and unlocks an additional 18% to 31% speedup.
+Two practical takeaways explain when Rust helps and when it does not:
+- Concurrent multi-range reads see the largest gain (3.43x to 4.55x faster, 2.1x to 6.5x lower CPU, and ~40% to 50% lower peak memory on 256 MiB transfers) because Tokio runs 16 to 100 range transfers in parallel without contending on the Python interpreter lock or allocating intermediate frame buffers.
+- Single-stream reads and writes see modest latency gains (1.11x to 1.25x) with 1.5x to 2.0x lower CPU usage because a single CloudPath HTTP/2 or TCP stream is network-bound around 250 to 335 MiB/s. On a 64 MiB JSON upload, Rust is slightly slower in wall time (521 ms vs 466 ms) because Rust uses a multi-step resumable upload with full-payload CRC32C verification while Python sends a single-shot multipart post without checksums.
 
 ## 4. Technical Challenges
 
@@ -65,7 +62,7 @@ Three practical takeaways explain when Rust helps and when it does not:
 | Platform reach | Feasible: end users installing gRPC dependencies already rely on platform-specific wheels from grpcio and cryptography; our package similarly shifts from a single pure-Python wheel to building and publishing a pre-built wheel matrix per OS, CPU architecture, and Python ABI (or abi3) via maturin/cibuildwheel. |
 | Package Size | Pure Python is 336 KiB alone (~11.8 MiB compressed / ~34.5 MiB unpacked with transitive grpcio and cryptography wheels). Our self-contained Rust wheel is 7.7 MiB compressed (20.5 MiB stripped). Adding DirectPath in Rust will increase size slightly, but the overall footprint remains comparable to Python's full gRPC stack. |
 | Toolchain, coordination and maintenance costs | Requires a dual Python and Rust toolchain. Even when reusing the core Rust SDK and benefiting from Rust's lower CVE rate, we still need an independent Python-specific effort to maintain the PyO3 binding layer, sync new APIs, and publish multi-OS wheels. |
-| Impedance mismatches | Manageable: as the Python SDK moves toward an async-first model, Rust's async Tokio futures map naturally to Python coroutines, in-progress Rust DirectPath support will be inherited automatically, and even when copying into Python `BytesIO` streams Rust remains up to 3.66x faster than Python. Only thin adapters are needed for custom Python auth credentials or logging handlers. |
+| Impedance mismatches | Manageable: as the Python SDK moves toward an async-first model, Rust's async Tokio futures map naturally to Python coroutines, and in-progress Rust DirectPath support will be inherited automatically. |
 | Harder debugging experience | Manageable in practice: while standard Python tracebacks stop at the FFI boundary, AI coding tools simplify cross-language diagnosis, and [PyO3's debugging workflow](https://pyo3.rs/main/debugging) supports Rust panic backtraces, breakpoints in pytest, and step-through IDE debugging via LLDB and GDB. |
 
 ### Conclusion
