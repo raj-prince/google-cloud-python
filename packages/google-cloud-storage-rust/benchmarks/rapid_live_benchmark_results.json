@@ -1,0 +1,165 @@
+{
+  "mode": "live_rapid_bucket_cloudpath (princer-rapid-bucket)",
+  "results": [
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 37.95,
+      "p99_latency_ms": 38.64,
+      "throughput_mib_s": 164.7,
+      "cpu_s_per_gib": 4.337
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 23.64,
+      "p99_latency_ms": 26.3,
+      "throughput_mib_s": 264.4,
+      "cpu_s_per_gib": 2.132
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust (8ch)",
+      "transport": "cloudpath",
+      "workload": "100 x 64 KiB",
+      "median_latency_ms": 13.02,
+      "p99_latency_ms": 13.46,
+      "throughput_mib_s": 479.9,
+      "cpu_s_per_gib": 2.664
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 200.22,
+      "p99_latency_ms": 220.35,
+      "throughput_mib_s": 319.6,
+      "cpu_s_per_gib": 4.075
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 259.59,
+      "p99_latency_ms": 270.18,
+      "throughput_mib_s": 246.5,
+      "cpu_s_per_gib": 2.428
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust (8ch)",
+      "transport": "cloudpath",
+      "workload": "64 x 1024 KiB",
+      "median_latency_ms": 84.94,
+      "p99_latency_ms": 103.77,
+      "throughput_mib_s": 753.5,
+      "cpu_s_per_gib": 2.64
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 1027.1,
+      "p99_latency_ms": 1038.68,
+      "throughput_mib_s": 249.2,
+      "cpu_s_per_gib": 4.974
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 760.05,
+      "p99_latency_ms": 823.43,
+      "throughput_mib_s": 336.8,
+      "cpu_s_per_gib": 2.094
+    },
+    {
+      "operation": "BidiRead (BytesIO)",
+      "backend": "rust (8ch)",
+      "transport": "cloudpath",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 433.05,
+      "p99_latency_ms": 479.94,
+      "throughput_mib_s": 591.2,
+      "cpu_s_per_gib": 2.61
+    },
+    {
+      "operation": "BidiRead (ZeroCopy PyBytes)",
+      "backend": "rust (8ch)",
+      "transport": "cloudpath",
+      "workload": "16 x 16384 KiB",
+      "median_latency_ms": 299.23,
+      "p99_latency_ms": 326.9,
+      "throughput_mib_s": 855.5,
+      "cpu_s_per_gib": 2.35
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "64 x 256 KiB",
+      "median_latency_ms": 157.98,
+      "p99_latency_ms": 158.17,
+      "throughput_mib_s": 101.3,
+      "cpu_s_per_gib": 1.86
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "64 x 256 KiB",
+      "median_latency_ms": 143.7,
+      "p99_latency_ms": 148.25,
+      "throughput_mib_s": 111.3,
+      "cpu_s_per_gib": 1.489
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "8 x 16384 KiB",
+      "median_latency_ms": 495.75,
+      "p99_latency_ms": 497.0,
+      "throughput_mib_s": 258.2,
+      "cpu_s_per_gib": 1.317
+    },
+    {
+      "operation": "BidiWrite (Append+Flush+Finalize)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "8 x 16384 KiB",
+      "median_latency_ms": 395.07,
+      "p99_latency_ms": 417.14,
+      "throughput_mib_s": 324.0,
+      "cpu_s_per_gib": 1.251
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "python",
+      "transport": "cloudpath",
+      "workload": "200 objects",
+      "median_latency_ms": 51.55,
+      "p99_latency_ms": 59.82,
+      "objects_per_sec": 3880.0,
+      "cpu_ms_per_call": 4.9
+    },
+    {
+      "operation": "ListObjects (gRPC Paginator)",
+      "backend": "rust",
+      "transport": "cloudpath",
+      "workload": "200 objects",
+      "median_latency_ms": 44.13,
+      "p99_latency_ms": 48.09,
+      "objects_per_sec": 4532.0,
+      "cpu_ms_per_call": 1.63
+    }
+  ]
+}
